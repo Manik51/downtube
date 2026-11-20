@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://manik51.github.io/downtube/sitemap.xml

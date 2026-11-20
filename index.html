@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="data:," />
+    <title>DownTube – Free Video Downloader &amp; Streaming App for Android</title>
+    <meta name="description" content="DownTube is a free all-in-one video app for Android: watch Tube videos, stream full movies & TV shows, enjoy Shorts and Music, all in one place. Download the DownTube APK free – no sign-up, no watermark." />
+    <style>
+      :root {
+        --cherry: #e01933;
+        --cherry-dark: #a31226;
+        --cherry-light: #ff4d6d;
+        --bg: #14100f;
+        --surface: #1e1917;
+        --card: #261f1d;
+        --peach: #ffd9c2;
+        --ink: #fff5f0;
+        --ink-dim: #c9b8b0;
+        --ink-faint: #8d7d76;
+        --glass-border: rgba(255, 217, 194, 0.16);
+        --radius-lg: 16px;
+        --radius-card: 24px;
+        --max: 1120px;
+        color-scheme: dark;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      a { color: inherit; text-decoration: none; }
+      img { max-width: 100%; display: block; }
+      .container { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+      button, [role="button"], summary { min-height: 2.25rem; }
+
+      /* ---------- Nav ---------- */
+      .nav {
+        position: sticky; top: 0; z-index: 50;
+        background: rgba(20, 16, 15, 0.85);
+        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--glass-border);
+      }
+      .nav-inner {
+        max-width: var(--max); margin: 0 auto; padding: 12px 20px;
+        display: flex; align-items: center; gap: 28px;
+      }
+      .brand { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 800; letter-spacing: -0.3px; min-height: 2.25rem; }
+      .brand img { width: 34px; height: 34px; border-radius: 9px; }
+      .brand span { color: var(--cherry-light); }
+      .nav-links { display: flex; gap: 6px; margin-left: auto; font-size: 15px; color: var(--ink-dim); }
+      .nav-links a { display: inline-flex; align-items: center; min-height: 2.25rem; padding: 0 10px; }
+      .nav-links a:hover { color: var(--ink); }
+      .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        background: var(--cherry); color: #fff; font-weight: 700; font-size: 16px;
+        padding: 13px 26px; border-radius: 999px; border: none; cursor: pointer;
+        box-shadow: 0 8px 28px rgba(224, 25, 51, 0.45);
+        transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+        min-height: 3rem;
+      }
+      .btn:hover { background: var(--cherry-light); transform: translateY(-2px); box-shadow: 0 12px 34px rgba(224, 25, 51, 0.55); }
+      .btn:active { transform: translateY(0) scale(0.98); }
+      .btn-small { padding: 9px 18px; font-size: 14px; min-height: 2.5rem; }
+      .btn-ghost {
+        background: rgba(255, 255, 255, 0.07); color: var(--ink);
+        border: 1px solid var(--glass-border); box-shadow: none;
+      }
+      .btn-ghost:hover { background: rgba(255, 255, 255, 0.13); }
+      .btn svg { flex-shrink: 0; }
+
+      /* ---------- Hero ---------- */
+      .hero { position: relative; padding: 72px 0 64px; overflow: hidden; }
+      .hero::before {
+        content: ""; position: absolute; inset: -20% -10% auto;
+        height: 640px; pointer-events: none;
+        background:
+          radial-gradient(420px 320px at 78% 30%, rgba(224, 25, 51, 0.28), transparent 70%),
+          radial-gradient(360px 300px at 12% 70%, rgba(255, 77, 109, 0.14), transparent 70%);
+      }
+      .hero-inner {
+        position: relative; display: grid; grid-template-columns: 1.05fr 0.95fr;
+        gap: 48px; align-items: center;
+      }
+      .badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(224, 25, 51, 0.14); border: 1px solid rgba(224, 25, 51, 0.4);
+        color: var(--cherry-light); font-size: 13px; font-weight: 700;
+        padding: 6px 14px; border-radius: 999px; margin-bottom: 20px;
+      }
+      .hero h1 { font-size: 52px; line-height: 1.08; font-weight: 800; letter-spacing: -1.2px; }
+      .hero h1 em { font-style: normal; color: var(--cherry-light); }
+      .hero p.lead { margin: 18px 0 26px; font-size: 18px; color: var(--ink-dim); max-width: 520px; }
+      .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+      .hero-note { margin-top: 14px; font-size: 13px; color: var(--ink-dim); }
+      .hero-note b { color: var(--peach); }
+      .hero-points { margin-top: 26px; display: flex; gap: 20px; flex-wrap: wrap; font-size: 14px; color: var(--ink-dim); }
+      .hero-points span::before { content: "✓ "; color: #3ecf6e; font-weight: 800; }
+
+      /* Phone mockup */
+      .phone-wrap { position: relative; display: flex; justify-content: center; }
+      .phone {
+        width: 300px; border-radius: 44px; padding: 10px;
+        background: linear-gradient(160deg, #3a2c28, #171110 55%, #241a17);
+        border: 1px solid rgba(255, 217, 194, 0.25);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 6px rgba(255, 255, 255, 0.03), 0 0 90px rgba(224, 25, 51, 0.22);
+        transform: rotate(2deg);
+      }
+      .phone-screen { border-radius: 36px; overflow: hidden; aspect-ratio: 9 / 19.2; background: #000; }
+      .phone-screen img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+      .float-card {
+        position: absolute; z-index: 3; background: rgba(38, 31, 29, 0.92);
+        border: 1px solid var(--glass-border); border-radius: 16px;
+        padding: 10px 14px; font-size: 13px; font-weight: 600;
+        box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+        display: flex; gap: 10px; align-items: flex-start;
+      }
+      .float-card svg { flex-shrink: 0; margin-top: 2px; }
+      .float-card small { display: block; color: var(--ink-dim); font-weight: 400; font-size: 11px; }
+      .float-a { top: 14%; left: -6px; }
+      .float-b { bottom: 16%; right: -4px; }
+
+      /* ---------- Sections ---------- */
+      section { padding: 72px 0; }
+      section[id] { scroll-margin-top: 70px; }
+      .section-head { text-align: center; max-width: 640px; margin: 0 auto 44px; }
+      .section-head h2 { font-size: 34px; font-weight: 800; letter-spacing: -0.8px; line-height: 1.15; }
+      .section-head p { margin-top: 12px; color: var(--ink-dim); font-size: 17px; }
+      .eyebrow { color: var(--cherry-light); font-weight: 700; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; }
+
+      /* Features */
+      .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+      .feature {
+        background: linear-gradient(165deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+        border: 1px solid var(--glass-border); border-radius: var(--radius-card);
+        padding: 26px 24px;
+      }
+      .feature .icon {
+        width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center;
+        background: rgba(224, 25, 51, 0.16); margin-bottom: 16px; color: var(--cherry-light);
+      }
+      .feature h3 { font-size: 19px; font-weight: 700; margin-bottom: 8px; }
+      .feature p { color: var(--ink-dim); font-size: 15px; }
+
+      /* Screenshots */
+      .shots { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
+      .shot { text-align: center; }
+      .shot .phone { width: 100%; max-width: 220px; margin: 0 auto; transform: none; border-radius: 34px; padding: 8px; }
+      .shot .phone-screen { aspect-ratio: 9 / 19.2; border-radius: 27px; }
+      .shot h3 { margin-top: 16px; font-size: 17px; }
+      .shot p { color: var(--ink-dim); font-size: 14px; margin-top: 4px; }
+
+      /* Steps */
+      .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+      .step {
+        position: relative; background: var(--surface); border: 1px solid var(--glass-border);
+        border-radius: var(--radius-card); padding: 28px 24px;
+      }
+      .step .num {
+        width: 44px; height: 44px; border-radius: 50%; background: var(--cherry);
+        color: #fff; font-weight: 800; font-size: 19px; display: flex; align-items: center; justify-content: center;
+        margin-bottom: 16px; box-shadow: 0 6px 20px rgba(224, 25, 51, 0.4);
+      }
+      .step h3 { font-size: 18px; margin-bottom: 8px; }
+      .step p { color: var(--ink-dim); font-size: 15px; }
+      .step code { background: rgba(255, 217, 194, 0.12); padding: 2px 7px; border-radius: 6px; font-size: 13px; color: var(--peach); }
+
+      /* Safe-install warning guide */
+      .guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+      .guide-card { background: var(--surface); border: 1px solid var(--glass-border); border-radius: var(--radius-card); padding: 26px 24px; }
+      .guide-card > h3 { font-size: 20px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+      .guide-card > p { color: var(--ink-dim); font-size: 15px; margin-bottom: 18px; }
+      .mock {
+        background: #f4f1ee; color: #241d1a; border-radius: 18px; overflow: hidden;
+        box-shadow: 0 18px 44px rgba(0,0,0,.45); margin-bottom: 18px; font-size: 13.5px; line-height: 1.45;
+      }
+      .mock-bar { display: flex; align-items: center; gap: 8px; background: #e7e0da; padding: 9px 12px; font-size: 12px; color: #5c4f49; font-weight: 600; }
+      .mock-bar .dot { width: 9px; height: 9px; border-radius: 50%; }
+      .mock-body { padding: 16px; }
+      .mock-file { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+      .mock-file .fic { width: 40px; height: 40px; border-radius: 10px; background: #e01933; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0; }
+      .mock-file b { font-size: 14.5px; }
+      .mock-file small { display: block; color: #7a6a63; }
+      .mock-warn { display: flex; gap: 10px; background: #fff3e2; border: 1px solid #f3cf9a; border-radius: 12px; padding: 11px 12px; margin: 12px 0; }
+      .mock-btns { display: flex; gap: 10px; margin-top: 14px; }
+      .mock-btn { flex: 1; text-align: center; padding: 10px 8px; border-radius: 999px; font-weight: 700; font-size: 13.5px; background: #e9e2dc; color: #5c4f49; position: relative; }
+      .mock-btn.go { background: #e01933; color: #fff; box-shadow: 0 0 0 3px rgba(224,25,51,.25); }
+      .tap-tag { display: inline-block; margin-top: 10px; background: #173d24; color: #7ce79b; font-size: 12px; font-weight: 700; padding: 5px 11px; border-radius: 999px; }
+      .mock-shield { text-align: center; padding: 6px 0 2px; }
+      .guide-steps { list-style: none; counter-reset: gs; }
+      .guide-steps li { counter-increment: gs; position: relative; padding: 0 0 12px 42px; color: var(--ink-dim); font-size: 15px; }
+      .guide-steps li::before { content: counter(gs); position: absolute; left: 0; top: 0; width: 28px; height: 28px; border-radius: 50%; background: rgba(224,25,51,.18); border: 1px solid rgba(224,25,51,.45); color: var(--cherry-light); font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+      .guide-steps li b { color: var(--ink); }
+      .guide-note { margin-top: 20px; background: rgba(62,207,110,.09); border: 1px solid rgba(62,207,110,.35); border-radius: var(--radius-lg); padding: 16px 18px; color: var(--ink-dim); font-size: 15px; }
+      .guide-note b { color: #7ce79b; }
+      .reassure-banner { background: linear-gradient(140deg, rgba(62,207,110,.18), rgba(62,207,110,.05) 60%, rgba(224,25,51,.08)); border: 1px solid rgba(62,207,110,.45); border-radius: var(--radius-card); padding: 24px 26px; margin-bottom: 22px; display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
+      .reassure-banner h3 { font-size: 21px; line-height: 1.3; margin-bottom: 8px; }
+      .reassure-banner h3 em { font-style: normal; color: #7ce79b; }
+      .reassure-banner p { color: var(--ink-dim); font-size: 15.5px; }
+      .reassure-points { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+      .reassure-points span { background: rgba(20,16,15,.55); border: 1px solid rgba(62,207,110,.4); color: var(--ink); font-size: 13px; font-weight: 700; padding: 7px 12px; border-radius: 999px; }
+      .reassure-points span::before { content: "✓ "; color: #3ecf6e; font-weight: 800; }
+      .fear-free { margin-top: 16px; background: rgba(62,207,110,.1); border: 1px solid rgba(62,207,110,.35); border-radius: 14px; padding: 13px 15px; color: var(--ink-dim); font-size: 14.5px; }
+      .fear-free b { color: #7ce79b; }
+      .worry-free { margin-top: 22px; text-align: center; background: var(--surface); border: 1px solid var(--glass-border); border-radius: var(--radius-card); padding: 28px 24px; }
+      .worry-free h3 { font-size: 22px; margin-bottom: 8px; }
+      .worry-free h3 em { font-style: normal; color: #7ce79b; }
+      .worry-free p { color: var(--ink-dim); font-size: 15.5px; max-width: 680px; margin: 0 auto; }
+
+      /* Security */
+      .security-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+      .sec-card { background: linear-gradient(165deg, rgba(255,255,255,.06), rgba(255,255,255,.015)); border: 1px solid var(--glass-border); border-radius: var(--radius-card); padding: 24px 22px; }
+      .sec-card .icon { width: 50px; height: 50px; border-radius: 15px; display: flex; align-items: center; justify-content: center; background: rgba(62,207,110,.14); color: #7ce79b; margin-bottom: 14px; }
+      .sec-card h3 { font-size: 17px; margin-bottom: 7px; }
+      .sec-card p { color: var(--ink-dim); font-size: 14.5px; }
+      .verify-strip { margin-top: 20px; background: var(--surface); border: 1px solid var(--glass-border); border-radius: var(--radius-card); padding: 24px; display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
+      .verify-strip h3 { font-size: 18px; margin-bottom: 6px; }
+      .verify-strip p, .verify-strip li { color: var(--ink-dim); font-size: 15px; }
+      .verify-strip ul { list-style: none; }
+      .verify-strip li::before { content: "✓ "; color: #3ecf6e; font-weight: 800; }
+
+      /* Story */
+      .story-wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: start; }
+      .story-text p { color: var(--ink-dim); font-size: 16.5px; margin-bottom: 16px; }
+      .story-text p b, .story-text p strong { color: var(--ink); }
+      .story-text .drop::first-letter { font-size: 52px; font-weight: 800; color: var(--cherry-light); float: left; line-height: .85; padding: 4px 10px 0 0; }
+      .story-quote { border-left: 3px solid var(--cherry); padding: 4px 0 4px 18px; margin: 22px 0; font-size: 19px; font-weight: 700; line-height: 1.5; color: var(--ink); }
+      .timeline { display: flex; flex-direction: column; gap: 16px; }
+      .tl-item { background: var(--surface); border: 1px solid var(--glass-border); border-radius: var(--radius-card); padding: 22px; }
+      .tl-item .when { color: var(--cherry-light); font-weight: 800; font-size: 12.5px; letter-spacing: 1.6px; text-transform: uppercase; }
+      .tl-item h3 { font-size: 18px; margin: 6px 0; }
+      .tl-item p { color: var(--ink-dim); font-size: 14.5px; }
+
+      /* Hero avatar — ONE Manik at the very top of the hero, standing beside the
+         headline and intro text with his feet on the same floor line as the text
+         block, so he reads as standing in the scene — never floating, never
+         overlapping the phone. No frame, no background: just him in his black
+         DownTube t-shirt. */
+      .hero-top { display: flex; align-items: flex-end; gap: 26px; }
+      .hero-text { flex: 1 1 auto; min-width: 0; }
+      .avatar-stage { position: relative; flex: 0 0 auto; width: 212px; height: 404px; }
+      .avatar-stage::before { content: ""; position: absolute; inset: 8% -16% 10%; z-index: 0; background: radial-gradient(closest-side, rgba(224,25,51,.30), rgba(224,25,51,.07) 55%, transparent 75%); filter: blur(16px); animation: hero-glow 5s ease-in-out infinite alternate; }
+      .avatar-stage::after { content: ""; position: absolute; left: 50%; bottom: -7px; transform: translateX(-50%); width: 74%; height: 20px; z-index: 0; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.55), transparent 72%); filter: blur(5px); }
+      @keyframes hero-glow { from { opacity: .55; } to { opacity: 1; } }
+
+      /* His endless smooth action loop, all inside the one stage: waving
+         welcome → thinking → scratching his head → hand-on-cheek thinking →
+         back to work at his laptop. Every pose is anchored to the same floor
+         line and the standing poses share one height, so the crossfades never
+         jump in size or position. The top 36px of the stage is a clear band
+         kept free for the speech bubble, so it never covers his face or hand. */
+      .avatar-stage .pose { position: absolute; z-index: 1; bottom: 0; left: 50%; height: calc(100% - 36px); width: auto; max-width: none; opacity: 0; transform: translateX(-50%); filter: drop-shadow(0 10px 16px rgba(0,0,0,.35)); animation: pose-cycle 24s ease-in-out infinite; }
+      .avatar-stage .pose-work { height: auto; width: 100%; }
+      .avatar-stage .pose-2 { animation-delay: 6s; }
+      .avatar-stage .pose-3 { animation-delay: 12s; }
+      .avatar-stage .pose-4 { animation-delay: 18s; }
+      @keyframes pose-cycle {
+        0% { opacity: 0; transform: translateX(-50%) translateY(14px) scale(.985); }
+        4% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+        12.5% { transform: translateX(-50%) translateY(-6px) scale(1); }
+        21% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+        25%, 100% { opacity: 0; transform: translateX(-50%) translateY(10px) scale(.985); }
+      }
+      .avatar-bubble { position: absolute; z-index: 2; top: 0; left: 0; background: var(--peach); color: #2a1712; font-size: 12.5px; font-weight: 800; padding: 6px 12px; border-radius: 999px 999px 999px 4px; box-shadow: 0 10px 24px rgba(0,0,0,.45); opacity: 0; white-space: nowrap; animation: bubble-cycle 24s ease-in-out infinite; }
+      .avatar-bubble.b2 { animation-delay: 6s; }
+      .avatar-bubble.b3 { animation-delay: 12s; }
+      .avatar-bubble.b4 { animation-delay: 18s; }
+      @keyframes bubble-cycle {
+        0% { opacity: 0; transform: translateY(8px) scale(.9); }
+        4% { opacity: 1; transform: translateY(0) scale(1); }
+        21% { opacity: 1; transform: translateY(0) scale(1); }
+        25%, 100% { opacity: 0; transform: translateY(-6px) scale(.94); }
+      }
+      /* Developer */
+      .dev-wrap { max-width: 780px; }
+      .dev-info h2 { font-size: 34px; font-weight: 800; letter-spacing: -.8px; line-height: 1.15; margin-bottom: 6px; }
+      .dev-byline { display: flex; align-items: center; gap: 14px; margin: 20px 0; }
+      .dev-byline img { width: 58px; height: 58px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(224,25,51,.6); animation: dev-pulse-ring 2.8s ease-in-out infinite; }
+      @keyframes dev-pulse-ring { 0%,100% { box-shadow: 0 0 0 0 rgba(224,25,51,.45); } 50% { box-shadow: 0 0 0 8px rgba(224,25,51,0); } }
+      .dev-byline b { font-size: 18px; display: block; }
+      .dev-byline span { color: var(--ink-dim); font-size: 14px; }
+      .dev-info p { color: var(--ink-dim); font-size: 16px; margin-bottom: 14px; }
+      .dev-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+      .dev-chips span { background: rgba(224,25,51,.13); border: 1px solid rgba(224,25,51,.35); color: var(--peach); font-size: 13px; font-weight: 700; padding: 7px 13px; border-radius: 999px; }
+
+      /* FAQ */
+      .faq { max-width: 760px; margin: 0 auto; }
+      .faq-item { background: var(--surface); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); margin-bottom: 12px; overflow: hidden; }
+      .faq-q {
+        width: 100%; background: none; border: none; color: var(--ink); text-align: left;
+        font-size: 16px; font-weight: 700; padding: 18px 20px; cursor: pointer;
+        display: flex; justify-content: space-between; align-items: center; gap: 16px;
+        font-family: inherit; min-height: 3.25rem;
+      }
+      .faq-q::after { content: "+"; color: var(--cherry-light); font-size: 22px; font-weight: 400; flex-shrink: 0; }
+      .faq-item.open .faq-q::after { content: "–"; }
+      .faq-a { display: none; padding: 0 20px 18px; color: var(--ink-dim); font-size: 15px; }
+      .faq-item.open .faq-a { display: block; }
+
+      /* Final CTA */
+      .final-cta {
+        background: linear-gradient(150deg, rgba(224, 25, 51, 0.22), rgba(224, 25, 51, 0.05) 55%, transparent);
+        border: 1px solid rgba(224, 25, 51, 0.35); border-radius: 32px;
+        padding: 48px 32px; text-align: center;
+      }
+      .final-cta h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.7px; }
+      .final-cta p { color: var(--ink-dim); margin: 12px auto 26px; max-width: 520px; }
+
+      /* Footer */
+      footer { border-top: 1px solid var(--glass-border); padding: 40px 0 32px; color: var(--ink-dim); font-size: 14px; }
+      .foot-inner { display: flex; gap: 32px; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; }
+      .foot-inner .brand { font-size: 19px; }
+      .foot-links a { display: inline-flex; align-items: center; min-height: 2rem; padding: 0 4px; }
+      .foot-links a:hover { color: var(--ink); }
+      footer small { display: block; margin-top: 24px; line-height: 1.7; color: var(--ink-faint); font-size: 12.5px; }
+
+      /* ---------- Responsive ---------- */
+      @media (max-width: 1020px) {
+        .shots { grid-template-columns: repeat(3, 1fr); }
+        .security-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (max-width: 900px) {
+        .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+        .hero h1 { font-size: 40px; }
+        .features { grid-template-columns: repeat(2, 1fr); }
+        .steps { grid-template-columns: 1fr; }
+        .nav-links { display: none; }
+        .float-a { left: 0; }
+        .float-b { right: 0; }
+        .guide-grid { grid-template-columns: 1fr; }
+        .story-wrap { grid-template-columns: 1fr; gap: 34px; }
+        .hero-top { gap: 20px; }
+        .avatar-stage { width: 176px; height: 336px; }
+        .verify-strip { grid-template-columns: 1fr; }
+        .reassure-banner { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+      }
+      @media (max-width: 560px) {
+        .hero { padding: 48px 0; }
+        .hero h1 { font-size: 33px; }
+        .features { grid-template-columns: 1fr; }
+        .shots { grid-template-columns: repeat(2, 1fr); }
+        section { padding: 52px 0; }
+        .section-head h2 { font-size: 27px; }
+        .phone { width: 262px; }
+        .float-a { top: 5%; }
+        .float-b { bottom: 6%; }
+        .shot .phone { width: 100%; }
+        .nav-inner { gap: 14px; }
+        .brand { font-size: 19px; }
+        .security-grid { grid-template-columns: 1fr; }
+        .hero-top { gap: 14px; }
+        .avatar-stage { width: 138px; height: 268px; }
+        .avatar-bubble { font-size: 11px; padding: 5px 10px; }
+        .hero p.lead { font-size: 16px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .btn { transition: none; }
+        .avatar-stage::before, .dev-byline img { animation: none; }
+        .avatar-stage .pose { animation: none; opacity: 0; }
+        .avatar-stage .pose-1 { opacity: 1; }
+        .avatar-bubble { animation: none; opacity: 0; }
+        .avatar-bubble.b1 { opacity: 1; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="#top"><img src="assets/logo-mark.png" alt="DownTube logo" width="34" height="34" />Down<span>Tube</span></a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="#features">Features</a>
+          <a href="#screenshots">Screenshots</a>
+          <a href="#install">How to Install</a>
+          <a href="#safe-install">Safe Install</a>
+          <a href="#story">Our Story</a>
+          <a href="#developer">Developer</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+        <a class="btn btn-small" href="https://drive.google.com/uc?id=1QNKzNzgxMJW5iOasvK4PJ8-e_JfiBxSw&amp;export=download" style="margin-left:auto">Download APK</a>
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- Hero -->
+      <section class="hero">
+        <div class="container hero-inner">
+          <div>
+            <div class="hero-top">
+              <div class="hero-text">
+                <span class="badge">Free for Android &bull; v1.0.0</span>
+                <h1>Every video you love, <em>in one app.</em></h1>
+                <p class="lead">DownTube brings Tube videos, full movies &amp; TV shows, Shorts and Music together in one fast, beautiful app. Download the APK free and start watching in seconds.</p>
+              </div>
+              <div class="avatar-stage" role="img" aria-label="Manik, the developer of DownTube, standing beside the headline in a black DownTube t-shirt — waving welcome, then thinking, scratching his head, thinking with his hand on his cheek, and getting back to work on his laptop, in an endless smooth animation loop">
+                <img class="pose pose-1" src="assets/avatar-wave.webp" alt="" width="821" height="2165" fetchpriority="high" />
+                <img class="pose pose-2" src="assets/avatar-think.webp" alt="" width="875" height="2149" />
+                <img class="pose pose-3" src="assets/avatar-scratch.webp" alt="" width="1120" height="2183" />
+                <img class="pose pose-4 pose-work" src="assets/avatar-working.webp" alt="" width="1498" height="1250" />
+                <span class="avatar-bubble b1" aria-hidden="true">Welcome!</span>
+                <span class="avatar-bubble b2" aria-hidden="true">Hmm&hellip; thinking</span>
+                <span class="avatar-bubble b3" aria-hidden="true">Wait&hellip; let me think</span>
+                <span class="avatar-bubble b4" aria-hidden="true">Back to building!</span>
+              </div>
+            </div>
+            <div class="hero-cta">
+              <a class="btn" href="https://drive.google.com/uc?id=1QNKzNzgxMJW5iOasvK4PJ8-e_JfiBxSw&amp;export=download">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 21h16"/></svg>
+                Download APK — Free
+              </a>
+              <a class="btn btn-ghost" href="#screenshots">See screenshots</a>
+            </div>
+            <p class="hero-note">Android 8.0+ &bull; <b>97 MB</b> &bull; No sign-up &bull; No watermark</p>
+            <div class="hero-points">
+              <span>100% free</span>
+              <span>No account needed</span>
+              <span>Tube + Stream + Music + Shorts</span>
+            </div>
+          </div>
+          <div class="phone-wrap">
+            <div class="float-card float-a">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff4d6d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m10 9 5 3-5 3z" fill="#ff4d6d" stroke="none"/></svg>
+              <span>Stream — Full Movies<small>Movies &amp; TV shows</small></span>
+            </div>
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="assets/home.jpg" alt="DownTube home screen with Tube, Stream and Music cards" width="720" height="1599" fetchpriority="high" />
+              </div>
+            </div>
+            <div class="float-card float-b">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff4d6d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><rect x="12" y="12" width="7" height="5" rx="1" fill="#ff4d6d" stroke="none"/></svg>
+              <span>Picture-in-Picture<small>Watch while you browse</small></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section id="features">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow">Features</span>
+            <h2>One app. Everything you watch.</h2>
+            <p>Four apps packed into one — Tube, Stream, Shorts and Music, built for speed and made for Android.</p>
+          </div>
+          <div class="features">
+            <article class="feature">
+              <div class="icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="m10 9.5 5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg>
+              </div>
+              <h3>Tube Videos</h3>
+              <p>An endless feed picked just for you. Fast tap-to-play, background play and more.</p>
+            </article>
+            <article class="feature">
+              <div class="icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 9h18M7 3v4M17 3v4M7 17v4M17 17v4"/></svg>
+              </div>
+              <h3>Stream Movies &amp; Shows</h3>
+              <p>Watch full movies and TV shows, with Continue Watching so you can pick up right where you left off, plus your own Watchlist.</p>
+            </article>
+            <article class="feature">
+              <div class="icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5z"/></svg>
+              </div>
+              <h3>Shorts</h3>
+              <p>Vertical short videos that play instantly. Swipe up for the next one — smooth, full-screen and distraction-free.</p>
+            </article>
+            <article class="feature">
+              <div class="icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              </div>
+              <h3>Music</h3>
+              <p>Trending music, albums and artists with a full-screen player, queue, synced lyrics and offline songs from your phone.</p>
+            </article>
+            <article class="feature">
+              <div class="icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><rect x="12" y="12" width="7" height="5" rx="1" fill="currentColor" stroke="none"/></svg>
+              </div>
+              <h3>Picture-in-Picture</h3>
+              <p>Keep watching in a small floating window while you use other apps. Drag it anywhere, expand it with one tap.</p>
+            </article>
+            <article class="feature">
+              <div class="icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              </div>
+              <h3>Lightning Search</h3>
+              <p>Find any video, movie or song in seconds — one search for everything you love to watch.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screenshots -->
+      <section id="screenshots">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow">Screenshots</span>
+            <h2>See DownTube in action</h2>
+            <p>Real screenshots from the app — Home, Tube, Stream, Shorts and the floating mini player.</p>
+          </div>
+          <div class="shots">
+            <div class="shot">
+              <div class="phone"><div class="phone-screen"><img src="assets/home.jpg" alt="DownTube home screen" loading="lazy" width="720" height="1599" /></div></div>
+              <h3>Home</h3><p>Tube, Stream &amp; Music in one place</p>
+            </div>
+            <div class="shot">
+              <div class="phone"><div class="phone-screen"><img src="assets/tube.jpg" alt="DownTube Tube video feed" loading="lazy" width="720" height="1599" /></div></div>
+              <h3>Tube</h3><p>Endless video feed</p>
+            </div>
+            <div class="shot">
+              <div class="phone"><div class="phone-screen"><img src="assets/stream.jpg" alt="DownTube Stream movies screen" loading="lazy" width="720" height="1599" /></div></div>
+              <h3>Stream</h3><p>Full movies &amp; TV shows</p>
+            </div>
+            <div class="shot">
+              <div class="phone"><div class="phone-screen"><img src="assets/shorts.jpg" alt="DownTube Shorts full-screen video" loading="lazy" width="720" height="1599" /></div></div>
+              <h3>Shorts</h3><p>Full-screen short videos</p>
+            </div>
+            <div class="shot">
+              <div class="phone"><div class="phone-screen"><img src="assets/pip.jpg" alt="DownTube picture-in-picture floating player" loading="lazy" width="720" height="1599" /></div></div>
+              <h3>Mini Player</h3><p>Watch anywhere, anytime</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Install steps -->
+      <section id="install">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow">How to Install</span>
+            <h2>Up and running in under a minute</h2>
+            <p>DownTube is not on Google Play — install it directly from the APK. It takes three taps.</p>
+          </div>
+          <div class="steps">
+            <div class="step">
+              <div class="num">1</div>
+              <h3>Download the APK</h3>
+              <p>Tap the Download APK button. The file is about 97 MB and works on Android 8.0 and newer.</p>
+            </div>
+            <div class="step">
+              <div class="num">2</div>
+              <h3>Allow the install</h3>
+              <p>When your phone asks, allow <code>Install unknown apps</code> for your browser. This is normal for APK installs.</p>
+            </div>
+            <div class="step">
+              <div class="num">3</div>
+              <h3>Open DownTube</h3>
+              <p>Tap Install, then Open. No account, no sign-up — pick a video and press play.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Safe install: Chrome + Play Protect warning guide -->
+      <section id="safe-install">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow">Safe Install Guide</span>
+            <h2>Seeing a warning? Please don't worry — there is nothing to fear</h2>
+            <p>Read this first, calmly: these two warnings appear for <b>every single app</b> that is installed as an APK from outside Google Play — even completely safe apps. They are Android's routine questions, <b>not</b> a sign that DownTube is dangerous. Look at the pictures, follow the taps, and then use DownTube with complete peace of mind.</p>
+          </div>
+          <div class="reassure-banner">
+            <svg width="58" height="58" viewBox="0 0 24 24" fill="none" stroke="#7ce79b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="m9 12 2 2 4-4"/></svg>
+            <div>
+              <h3>You can relax — <em>DownTube is safe to install and safe to use, worry-free.</em></h3>
+              <p>Chrome and Play Protect are simply doing their job: they warn about <b>any</b> file they haven't seen on the Play Store yet. DownTube from this official page has been antivirus-scanned and security-checked before publishing. Thousands of phones see these exact same screens for good apps every day. Nothing will happen to your phone, your photos or your data — just tap as shown below and enjoy.</p>
+              <div class="reassure-points">
+                <span>Warnings = routine, not danger</span>
+                <span>Antivirus scanned</span>
+                <span>Security checked</span>
+                <span>No account, no data taken</span>
+              </div>
+            </div>
+          </div>
+          <div class="guide-grid">
+            <div class="guide-card">
+              <h3><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff4d6d" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg> 1 &middot; The Chrome warning — don't panic</h3>
+              <p><b>Nothing to fear here.</b> Right after you tap Download, Chrome may say the file "may harm your device." That scary sentence is automatic — Chrome shows it for <b>all</b> APK files, even safe ones from big companies. It has not found anything wrong with DownTube. Just tap <b>Keep</b>, exactly as in the picture.</p>
+              <div class="mock" role="img" aria-label="Illustration of the Chrome download warning for DownTube APK with Keep button highlighted">
+                <div class="mock-bar"><span class="dot" style="background:#e01933"></span><span class="dot" style="background:#e8a13a"></span><span class="dot" style="background:#3ecf6e"></span> Chrome &middot; Downloads</div>
+                <div class="mock-body">
+                  <div class="mock-file">
+                    <div class="fic">APK</div>
+                    <div><b>DownTube.apk</b><small>97 MB &middot; Download complete</small></div>
+                  </div>
+                  <div class="mock-warn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b97a1e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2.5 20h19z"/><path d="M12 10v4M12 17.5v.5"/></svg>
+                    <span><b>This type of file may harm your device.</b><br />Do you want to keep DownTube.apk anyway?</span>
+                  </div>
+                  <div class="mock-btns">
+                    <span class="mock-btn">Discard</span>
+                    <span class="mock-btn go">Keep &check;</span>
+                  </div>
+                  <span class="tap-tag">Tap KEEP with confidence — it is safe to keep</span>
+                </div>
+              </div>
+              <ol class="guide-steps">
+                <li>Tap <b>Download APK</b> on this page and wait for the download to finish.</li>
+                <li>When Chrome shows the warning above, stay calm and tap <b>Keep</b> (on some phones: <b>Download anyway</b>). This one tap is all it takes.</li>
+                <li>Open the downloaded <b>DownTube.apk</b> file from your notifications or Downloads folder.</li>
+              </ol>
+              <div class="fear-free"><b>Why you don't need to worry:</b> this warning appears before Chrome even looks inside the file — it is shown for the file <i>type</i> (APK), not because DownTube failed any check. Keeping it cannot harm your phone.</div>
+            </div>
+            <div class="guide-card">
+              <h3><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7ce79b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="m9 12 2 2 4-4"/></svg> 2 &middot; The Play Protect warning — also normal</h3>
+              <p><b>Again, nothing to fear.</b> While installing, Google Play Protect scans DownTube — and that scan actually protects you. For any app from outside the Play Store, it politely asks "are you sure?" before finishing. That question means the guard is awake, not that it found a problem. Tap <b>Install anyway</b>, exactly as in the picture, and you're done.</p>
+              <div class="mock" role="img" aria-label="Illustration of the Google Play Protect install dialog with Install anyway button highlighted">
+                <div class="mock-bar"><span class="dot" style="background:#3ecf6e"></span> Google Play Protect</div>
+                <div class="mock-body">
+                  <div class="mock-shield">
+                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#2f9e57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="m9 12 2 2 4-4"/></svg>
+                  </div>
+                  <div class="mock-file" style="justify-content:center;text-align:left">
+                    <div class="fic" style="background:#14100f">▶</div>
+                    <div><b>Install DownTube?</b><small>Scanned by Play Protect</small></div>
+                  </div>
+                  <div class="mock-warn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b97a1e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg>
+                    <span><b>Play Protect hasn't seen this app before.</b><br />It was installed from outside Google Play. You can still install it.</span>
+                  </div>
+                  <div class="mock-btns">
+                    <span class="mock-btn">Cancel</span>
+                    <span class="mock-btn go">Install anyway &check;</span>
+                  </div>
+                  <span class="tap-tag">Tap INSTALL ANYWAY with confidence — you're safe</span>
+                </div>
+              </div>
+              <ol class="guide-steps">
+                <li>Tap <b>Install</b> when the installer opens. Play Protect will scan DownTube automatically — let it; it's on your side.</li>
+                <li>If it asks for confirmation, tap <b>Install anyway</b> without hesitation (on some phones: <b>More details &rarr; Install anyway</b>).</li>
+                <li>If your phone asks to allow installs from your browser, tap <b>Allow</b> / turn on <b>Allow from this source</b>, go back, and tap Install again. This permission is only for installing DownTube.</li>
+                <li>Tap <b>Open</b> — you're in. No account, no sign-up, nothing to worry about.</li>
+              </ol>
+              <div class="fear-free"><b>Why you don't need to worry:</b> if Play Protect had actually found something harmful, it would block the install completely with no "Install anyway" option. Seeing that option means the scan finished and you are free to proceed safely.</div>
+            </div>
+          </div>
+          <div class="guide-note"><b>Golden rule:</b> only ever download DownTube from this official page — that's the one habit that keeps you 100% safe. If a different website offers you a "DownTube" file, don't install it — come back here and get the real, scanned one.</div>
+          <div class="worry-free">
+            <h3>Install it once, then <em>use DownTube worry-free, every day</em></h3>
+            <p>These warnings last for ten seconds during install — and then they're gone forever. After that, DownTube just works: no warnings while you watch, no pop-ups asking for strange permissions, no account watching over you. Your history stays on your phone, the app only uses the internet to play your videos and music, and you can uninstall it any time like any normal app. So take a breath, follow the two pictures above, and enjoy — with complete peace of mind.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Security -->
+      <section id="security">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow">Security &amp; Trust</span>
+            <h2>Checked, scanned and built to respect your phone</h2>
+            <p>We take security seriously at every step — before the APK reaches this page, and inside the app itself.</p>
+          </div>
+          <div class="security-grid">
+            <article class="sec-card">
+              <div class="icon"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="m9 12 2 2 4-4"/></svg></div>
+              <h3>Antivirus Scanned</h3>
+              <p>Every release build is scanned with antivirus tools before it is published here, and Play Protect scans it again on your phone during install.</p>
+            </article>
+            <article class="sec-card">
+              <div class="icon"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="m8.5 11 2 2 3.5-4"/></svg></div>
+              <h3>Security Checked</h3>
+              <p>The full app goes through a security review of its code and behaviour before release — what it connects to, what it stores, and what it never touches.</p>
+            </article>
+            <article class="sec-card">
+              <div class="icon"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+              <h3>Only the Permissions It Needs</h3>
+              <p>DownTube asks only for what playback needs — internet to stream, and media access for your offline songs. No contacts, no messages, no location.</p>
+            </article>
+            <article class="sec-card">
+              <div class="icon"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-5.5 8-5.5s6.5 1.5 8 5.5"/></svg></div>
+              <h3>Private by Design</h3>
+              <p>No account and no sign-up. Your watch history and recommendations live on your device — not uploaded, not sold, not shared.</p>
+            </article>
+          </div>
+          <div class="verify-strip">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#7ce79b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="m9 12 2 2 4-4"/></svg>
+            <div>
+              <h3>Don't just trust us — verify it yourself</h3>
+              <ul>
+                <li>Let Play Protect scan the APK during install — it happens automatically.</li>
+                <li>After installing, check Settings &rarr; Apps &rarr; DownTube &rarr; Permissions and see exactly what it can access.</li>
+                <li>Compare the file: the real APK is about 97 MB, version 1.0.0, and only comes from this page.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Our Story -->
+      <section id="story">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow">Our Story</span>
+            <h2>The days of a dozen apps are over</h2>
+            <p>How one simple frustration became DownTube — three months, countless late nights, and one promise: everything you watch, in one place.</p>
+          </div>
+          <div class="story-wrap">
+            <div class="story-text">
+              <p class="drop">Think about your phone for a second. One app for videos. Another for movies. A third for web series. One more for music, another for short videos — and every single one of them wants your storage, your attention, your sign-ups and your subscriptions. We all lived like that. We spent our days jumping from app to app, closing one to open the next, losing the video we were watching, forgetting where that film was saved. <b>Those days are now in the past.</b></p>
+              <p>The idea for DownTube came from that exact frustration — sitting with a phone full of apps and still not finding everything in one place. <b>Why should watching something simple need five different apps?</b> That one question refused to go away. It followed through days and nights until it stopped being a complaint and became a mission: build one honest app where Tube videos, full movies and shows, Shorts and Music all live together — fast, free, and without asking for anything in return.</p>
+              <div class="story-quote">"One phone. One app. Everything you love to watch. That was the dream — and we were not going to stop until it was real."</div>
+              <p>The road was anything but easy. For nearly <strong>three months</strong>, DownTube was built piece by piece — and rebuilt, and rebuilt again. Videos that refused to play. Streams that broke at midnight. A player that had to feel instant, a design that had to feel premium, and a size that had to stay friendly to real phones. Some days ended with a breakthrough; many ended with a new problem nobody had seen before. Every failure taught something. Every fix made the app stronger. Quitting would have been easier — it was simply never an option.</p>
+              <p>Today, DownTube is that dream in your hands: one app that opens fast, plays instantly, remembers where you left off, floats in a mini player while you do other things, and never asks you to create an account. It was not made by a big company with a big office. It was made with patience, stubbornness and love — for everyone who was tired of the app-juggling life. <b>Welcome to the one-app era. Welcome to DownTube.</b></p>
+            </div>
+            <div class="timeline">
+              <div class="tl-item">
+                <span class="when">The Spark</span>
+                <h3>A phone full of apps, nothing in one place</h3>
+                <p>The frustration of switching between separate apps for videos, movies, shorts and music sparked a simple idea: what if it was all one app?</p>
+              </div>
+              <div class="tl-item">
+                <span class="when">Month One</span>
+                <h3>First builds, first heartbreaks</h3>
+                <p>The first versions barely worked. Feeds stuttered, streams failed, the design felt wrong. But the core dream — Tube, Stream, Shorts and Music together — finally played on a real phone for the first time.</p>
+              </div>
+              <div class="tl-item">
+                <span class="when">Month Two</span>
+                <h3>The hard middle</h3>
+                <p>The toughest stretch: fixing playback, speeding up loading, adding Continue Watching, the Watchlist, picture-in-picture and a music player with lyrics — testing every single button until nothing was left broken or dead.</p>
+              </div>
+              <div class="tl-item">
+                <span class="when">Month Three</span>
+                <h3>Polish, security and launch</h3>
+                <p>Final months went into polish and trust: performance passes, security checks, antivirus scans, and testing on real devices — until DownTube v1.0.0 was finally ready to share with the world.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Developer -->
+      <section id="developer">
+        <div class="container dev-wrap">
+          <div class="dev-info">
+            <span class="eyebrow">Meet the Developer</span>
+            <h2>The person behind DownTube</h2>
+            <div class="dev-byline">
+              <img src="assets/developer-avatar.png" alt="Manik — creator and developer of DownTube" width="58" height="58" />
+              <div><b>Manik</b><span>Creator &amp; Developer of DownTube &middot; Ashoknagar Kalyangarh, West Bengal, India</span></div>
+            </div>
+            <p>DownTube wasn't built by a big team in a big office. It was built by one developer who believed watching videos shouldn't mean juggling a dozen apps — and spent three months proving it, one fix at a time.</p>
+            <p>Every screen, every button and every second of playback was tested by hand, on a real phone, until it felt right. If DownTube saves you time, storage or one small daily frustration, then every late night was worth it.</p>
+            <p><b style="color:var(--ink)">"I built the app I always wished existed. Now it's yours."</b> — Manik</p>
+            <div class="dev-chips">
+              <span>3 months of building</span>
+              <span>Independently developed</span>
+              <span>Made in India</span>
+              <span>Still improving, every week</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow">FAQ</span>
+            <h2>Questions, answered</h2>
+          </div>
+          <div class="faq">
+            <div class="faq-item">
+              <button class="faq-q" type="button" aria-expanded="false">Is DownTube free?</button>
+              <div class="faq-a">Yes. DownTube is 100% free to download and use. There is no subscription, no premium tier and no sign-up required.</div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-q" type="button" aria-expanded="false">How do I install DownTube on Android?</button>
+              <div class="faq-a">Download the APK from this page, allow install from unknown sources when your phone asks, then open the file to install. DownTube is not on Google Play, so it installs directly from the APK.</div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-q" type="button" aria-expanded="false">Can I watch full movies on DownTube?</button>
+              <div class="faq-a">Yes. The Stream section lets you browse and watch full movies and TV shows, alongside Tube videos, Shorts and Music.</div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-q" type="button" aria-expanded="false">Do I need an account to use DownTube?</button>
+              <div class="faq-a">No. DownTube works without any account or sign-up. Your watch history and recommendations stay on your device.</div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-q" type="button" aria-expanded="false">Is DownTube safe?</button>
+              <div class="faq-a">Yes — you can use DownTube with complete peace of mind. Every build is antivirus-scanned and security-checked before it is published here, and Play Protect scans it again on your phone during install. DownTube asks only for the permissions it needs to play videos and read your offline music — no contacts, no messages, no location — and your watch history stays on your device. Just make sure you download the APK only from this official page.</div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-q" type="button" aria-expanded="false">Chrome says the file "may harm my device." Should I be scared?</button>
+              <div class="faq-a">No, please don't be scared — there is nothing to fear. Chrome shows that exact message for every APK file downloaded outside Google Play, even safe apps, because it warns about the file type before checking anything inside it. It does not mean Chrome found a problem in DownTube. If you downloaded the file from this official page, simply tap Keep (or Download anyway) and continue, exactly as shown in our Safe Install Guide above.</div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-q" type="button" aria-expanded="false">Play Protect is warning me during install. Is my phone in danger?</button>
+              <div class="faq-a">No, your phone is not in danger. Play Protect shows this confirmation for any app installed from outside the Play Store — it is Play Protect doing its job and scanning the app for you. If it had found something actually harmful, it would block the install completely and give you no way to continue. Seeing the Install anyway button means the scan finished and you can tap it with confidence, as shown step by step in the Safe Install Guide. After installing, DownTube runs like any normal app, with no more warnings.</div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-q" type="button" aria-expanded="false">Why does DownTube show one video ad per video?</button>
+              <div class="faq-a">One short video ad plays before each video. Ads keep DownTube free for everyone and support its development.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Final CTA -->
+      <section>
+        <div class="container">
+          <div class="final-cta">
+            <h2>Ready to watch?</h2>
+            <p>Download DownTube free for Android and get Tube, Stream, Shorts and Music in one beautiful app.</p>
+            <a class="btn" href="https://drive.google.com/uc?id=1QNKzNzgxMJW5iOasvK4PJ8-e_JfiBxSw&amp;export=download">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 21h16"/></svg>
+              Download DownTube APK — Free
+            </a>
+            <p class="hero-note" style="margin-top:16px">Version 1.0.0 &bull; Android 8.0+ &bull; 97 MB &bull; Free</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container foot-inner">
+        <a class="brand" href="#top"><img src="assets/logo-mark.png" alt="DownTube logo" width="30" height="30" />Down<span>Tube</span></a>
+        <div class="foot-links">
+          <a href="#features">Features</a> &nbsp;&middot;&nbsp;
+          <a href="#screenshots">Screenshots</a> &nbsp;&middot;&nbsp;
+          <a href="#install">How to Install</a> &nbsp;&middot;&nbsp;
+          <a href="#safe-install">Safe Install</a> &nbsp;&middot;&nbsp;
+          <a href="#security">Security</a> &nbsp;&middot;&nbsp;
+          <a href="#story">Our Story</a> &nbsp;&middot;&nbsp;
+          <a href="#developer">Developer</a> &nbsp;&middot;&nbsp;
+          <a href="#faq">FAQ</a>
+        </div>
+      </div>
+      <div class="container">
+        <small>&copy; 2026 DownTube. All rights reserved. DownTube is an independent app and is not affiliated with, endorsed by, or connected to YouTube, Google, Snaptube, Vega, Netflix, Amazon Prime Video or Apple TV+. All trademarks belong to their respective owners. Please respect copyright — only watch and download content you have the right to use.</small>
+      </div>
+    </footer>
+
+    <script>
+      document.querySelectorAll('.faq-item').forEach(function (item) {
+        var btn = item.querySelector('.faq-q');
+        btn.addEventListener('click', function () {
+          var wasOpen = item.classList.contains('open');
+          document.querySelectorAll('.faq-item.open').forEach(function (other) {
+            other.classList.remove('open');
+            other.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+          });
+          if (!wasOpen) {
+            item.classList.add('open');
+            btn.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
